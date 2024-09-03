@@ -1,12 +1,25 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
     <head>
         <title>the homepage</title>
+        <link rel="stylesheet" href="{% static 'style.css' %}">
     </head>
     <body>
         <div>
-            <div>
+            <div class="head1-home">
                 <h2>ATM</h2>
+            </div>
+            <div class="menu-home">
+                <div class="headwithdraw">
+                    <h3><a href="{% url 'withdraw' %}">Withdraw</a></h3>
+                </div>
+                <div class="headdeposit">
+                    <h3><a href="{% url 'deposit' %}">Deposit</a></h3>
+                </div>
+                <div class="headbalance">
+                    <h3><a href="{% url 'balance' %}">Balance</a></h3>
+                </div>
             </div>
         </div>
     </body>

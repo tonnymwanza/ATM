@@ -47,7 +47,7 @@ def registration_view(request):
                 return redirect('login_view')
         else:
             messages.error(request, 'error!!! the passwords dont match')
-    return render(request, 'registration.html')
+    return render(request, 'signup.html')
 
 # the login view
 def login_view(request):
@@ -61,4 +61,4 @@ def login_view(request):
             return redirect('home')
         else:
             messages.error(request, 'invalid username or password. check to continue')
-    return render(request, 'login_view.html')
+    return render(request, 'login.html')

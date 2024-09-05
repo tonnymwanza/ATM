@@ -38,3 +38,33 @@
     margin-top: 100px;
     border-radius: 15px;
 }
+
+/* signup form styling */
+.signup-styling{
+    text-align: center;
+    margin-top: 100px;
+}
+
+input{
+    width: 270px;
+    height: 30px;
+    border-radius: 10px;
+}
+
+.signup-username{
+    
+}
+
+.signup-password{
+    margin-top: 30px;
+}
+
+.signup-password2{
+    margin-top: 30px;
+}
+
+button{
+    margin-top: 30px;
+    height: 30px;
+    border-radius: 5px;
+}

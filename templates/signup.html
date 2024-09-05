@@ -1,0 +1,38 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="{% static 'style.css' %}">
+        <title>signup page</title>
+    </head>
+    <body>
+        <div>
+            <div>
+                <h3 style="text-align: center;margin-top: 100px;font-size: 30px;">Register</h3>
+            </div>
+            <form method="POST" action="">
+                {% csrf_token %}
+                <div class="signup-styling">
+                    <div class="signup-usename">
+                        <label>Username</label><br>
+                        <input type="text" name="username" placeholder="type username" required>
+                    </div>
+                    <div class="signup-password">
+                        <label>Password</label><br>
+                        <input type="password" name="password" placeholder="type password" required>
+                    </div>
+                    <div class="signup-password2">
+                        <label>Confirm password</label><br>
+                        <input type="password" name="password2" placeholder="re-type password" required>
+                    </div>
+                    {% for message in messages %}
+                    <span style="color: red;">{{message}}</span>
+                    {% endfor %}
+                    <div>
+                        <button type="submit">Signup</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </body>
+</html>

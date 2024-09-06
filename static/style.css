@@ -3,6 +3,7 @@
     text-align: center;
     margin-top: 50px;
     font-size: 35px;
+    background-color: grey;     
 }
 
 /* withdraw styling on home page */
@@ -51,9 +52,6 @@ input{
     border-radius: 10px;
 }
 
-.signup-username{
-    
-}
 
 .signup-password{
     margin-top: 30px;
@@ -67,4 +65,28 @@ button{
     margin-top: 30px;
     height: 30px;
     border-radius: 5px;
+}
+
+.login-styling{
+    text-align: center;
+    margin-top: 100px;
+}
+
+.login-head{
+    text-align: center;
+    margin-top: 50px;
+    font-size: 35px;
+    background-color: grey;
+}
+
+.login-password{
+    margin-top: 30px;
+}
+
+/* intro page styling */
+.intro-head{
+    font-size: 25px;
+    font-family: sans-serif;
+    font-weight: bold;
+    margin-left: 40px;
 }

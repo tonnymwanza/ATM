@@ -1,0 +1,13 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="{% static 'style.css' %}">
+        <title>welcome page</title>
+    </head>
+    <body>
+        <div class="intro-head">
+            <h3>Welcome @{{user.username}}</h3>
+        </div>
+    </body>
+</html>

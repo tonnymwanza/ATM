@@ -8,7 +8,7 @@
     <body>
         <div>
             <div>
-                <h3 style="text-align: center;margin-top: 100px;font-size: 30px;">Register</h3>
+                <h3 style="text-align: center;margin-top: 100px;font-size: 30px;background-color: grey;">Register</h3>
             </div>
             <form method="POST" action="">
                 {% csrf_token %}
@@ -30,6 +30,7 @@
                     {% endfor %}
                     <div>
                         <button type="submit">Signup</button>
+                        <span><p>or <a href="{% url 'login_view' %}">Sign-In</a></p></span>
                     </div>
                 </div>
             </form>

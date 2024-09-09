@@ -15,19 +15,22 @@ class HomeView(View):
         return render(request, 'home.html')
     
 # the view to render the withdraw page
-class WithdrawView(View):
+class WithdrawView(LoginRequiredMixin, View):
+    login_url = 'login_view'
 
     def get(self, request):
         return render(request, 'withdraw.html')
 
 # the view to render the deposit page
-class DepositView(View):
+class DepositView(LoginRequiredMixin, View):
+    login_url = 'login_view'
 
     def get(self, request):
         return render(request, 'deposit.html')
     
 # the view to render the balance page
-class BalanceView(View):
+class BalanceView(LoginRequiredMixin, View):
+    login_url = 'login_view'
 
     def get(self, request):
         return render(request, 'balance.html')
@@ -58,7 +61,10 @@ def login_view(request):
         user = authenticate(username = username, password = password)
         if user is not None:
             auth.login(request, user)
-            return redirect('home')
+            if 'next' in request.POST:
+                return redirect(request.POST['next'])
+            else:
+                return redirect('home')
         else:
             messages.error(request, 'invalid username or password. check to continue')
     return render(request, 'login.html')

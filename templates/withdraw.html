@@ -11,6 +11,18 @@
             <div>
                 {% include 'intro.html' %}
             </div>
+            <div>
+                <form method="POST" action>
+                    {% csrf_token %}
+                    <div>
+                        <label>Amount</label>
+                        {{form.amount}}
+                    </div>
+                    <div>
+                        <button type="submit">Withdraw</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </body>
 </html>

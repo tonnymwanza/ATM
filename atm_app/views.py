@@ -6,6 +6,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.contrib import auth
 from django.shortcuts import redirect
+
+from . forms import WithdrawForm
 # Create your views here.
 
 # home page view
@@ -21,7 +23,11 @@ class WithdrawView(LoginRequiredMixin,View):
     login_url = 'login_view'
 
     def get(self, request):
-        return render(request, 'withdraw.html')
+        form = WithdrawForm(request.GET)
+        context = {
+            'form': form
+        }
+        return render(request, 'withdraw.html', context)
 
 # the view to render the deposit page
 class DepositView(LoginRequiredMixin, View):

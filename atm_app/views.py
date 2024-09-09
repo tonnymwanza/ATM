@@ -15,6 +15,8 @@ class HomeView(View):
         return render(request, 'home.html')
     
 # the view to render the withdraw page
+class WithdrawView(LoginRequiredMixin, View):
+    login_url = 'login_view'
 class WithdrawView(LoginRequiredMixin,View):
     login_url = 'login_view'
 
@@ -22,6 +24,8 @@ class WithdrawView(LoginRequiredMixin,View):
         return render(request, 'withdraw.html')
 
 # the view to render the deposit page
+class DepositView(LoginRequiredMixin, View):
+    login_url = 'login_view'
 class DepositView(LoginRequiredMixin,View):
     login_url = 'login_view'
 
@@ -29,6 +33,8 @@ class DepositView(LoginRequiredMixin,View):
         return render(request, 'deposit.html')
     
 # the view to render the balance page
+class BalanceView(LoginRequiredMixin, View):
+    login_url = 'login_view'
 class BalanceView(LoginRequiredMixin,View):
     login_url = 'login_view'
 
@@ -61,6 +67,10 @@ def login_view(request):
         user = authenticate(username = username, password = password)
         if user is not None:
             auth.login(request, user)
+            if 'next' in request.POST:
+                return redirect(request.POST['next'])
+            else:
+                return redirect('home')
             if 'next' in request.POST:
                 return redirect(request.POST['next'])
             else:

@@ -52,7 +52,6 @@ input{
     border-radius: 10px;
 }
 
-
 .signup-password{
     margin-top: 30px;
 }
@@ -65,6 +64,22 @@ button{
     margin-top: 30px;
     height: 30px;
     border-radius: 5px;
+}
+
+/* login form styling */
+.login-styling{
+    text-align: center;
+    margin-top: 100px;
+}
+
+.login-head{
+    text-align: center;
+    font-size: 30px;
+    margin-top: 100px;
+}
+
+.login-password{
+    margin-top: 30px;
 }
 
 .login-styling{

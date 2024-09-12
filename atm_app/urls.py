@@ -1,10 +1,11 @@
 from . views import HomeView
 from django.urls import path
+from . import views
 
+from . views import WithdrawSuccessView
 from . views import WithdrawView
 from . views import BalanceView
 from . views import DepositView
-from . import views
 # my urls
 
 urlpatterns = [
@@ -14,5 +15,6 @@ urlpatterns = [
     path('deposit', DepositView.as_view(), name='deposit'),
     path('login_view', views.login_view, name='login_view'),
     path('registration_view', views.registration_view, name='registration_view'),
+    path('withdraw_success_view', WithdrawSuccessView.as_view(), name='withdraw_success_view'),
 ]
 

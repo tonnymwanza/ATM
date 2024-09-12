@@ -7,7 +7,8 @@ from django.contrib import messages
 from django.contrib import auth
 from django.shortcuts import redirect
 
-from . forms import WithdrawForm
+from . models import Transaction
+from . forms import TransactionForm
 # Create your views here.
 
 # home page view
@@ -23,11 +24,19 @@ class WithdrawView(LoginRequiredMixin,View):
     login_url = 'login_view'
 
     def get(self, request):
-        form = WithdrawForm(request.GET)
+        form = TransactionForm(request.GET)
         context = {
             'form': form
         }
         return render(request, 'withdraw.html', context)
+    
+    def post(self, request):
+        form = TransactionForm(request.POST or None)
+        transaction_objects = Transaction.objects.create(
+            'amount_to_withdraw',
+            'user'
+        )
+        return redirect('withdraw_success_view')
 
 # the view to render the deposit page
 class DepositView(LoginRequiredMixin, View):
@@ -84,3 +93,9 @@ def login_view(request):
         else:
             messages.error(request, 'invalid username or password. check to continue')
     return render(request, 'login.html')
+
+# the view to render the success message after withdrawal
+class WithdrawSuccessView(View):
+
+    def get(self, request):
+        return render(request, 'withdraw_success.html')

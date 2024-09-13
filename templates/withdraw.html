@@ -18,6 +18,9 @@
                         <label>Amount</label>
                         {{form.amount_to_withdraw}}
                     </div>
+                    {% for messsage in messages %}
+                    <span style="color: red;">{{message}}</span>
+                    {% endfor %}
                     <div>
                         <button type="submit">Withdraw</button>
                     </div>

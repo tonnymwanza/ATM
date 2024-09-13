@@ -18,8 +18,6 @@ class HomeView(View):
         return render(request, 'home.html')
     
 # the view to render the withdraw page
-class WithdrawView(LoginRequiredMixin, View):
-    login_url = 'login_view'
 class WithdrawView(LoginRequiredMixin,View):
     login_url = 'login_view'
 
@@ -32,10 +30,18 @@ class WithdrawView(LoginRequiredMixin,View):
     
     def post(self, request):
         form = TransactionForm(request.POST or None)
-        transaction_objects = Transaction.objects.create(
-            'amount_to_withdraw',
-            'user'
-        )
+        if form.is_valid():
+            transaction_objects = Transaction.objects.create(
+                amount_to_withdraw = form.cleaned_data['amount_to_withdraw'],
+                user = request.user
+            )
+        else:
+            form = TransactionForm()
+            messages.error(request, 'error saving information')
+            # return redirect('withdraw')
+        # context = {
+        #     'transaction_objects': transaction_objects
+        # }
         return redirect('withdraw_success_view')
 
 # the view to render the deposit page
@@ -98,4 +104,9 @@ def login_view(request):
 class WithdrawSuccessView(View):
 
     def get(self, request):
-        return render(request, 'withdraw_success.html')
+        last_transaction = Transaction.objects.last()
+        context = {
+            'last_transaction': last_transaction
+        }
+        print(last_transaction)
+        return render(request, 'withdraw_success.html', context)

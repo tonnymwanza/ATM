@@ -11,6 +11,21 @@
             <div>
                 {% include 'intro.html' %}
             </div>
+            <div>
+                <form method="POST" action="">
+                    {% csrf_token %}
+                    <div>
+                        <label>Amount to deposit</label>
+                        {{form.amount_to_deposit}}
+                    </div>
+                    {% for message in messages %}
+                    <span style="color: red;">{{message}}</span>
+                    {% endfor %}
+                    <div>
+                        <button type="submit">Deposit</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </body>
 </html>

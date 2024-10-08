@@ -33,3 +33,21 @@ class TestBalance(TestCase):
         self.response = self.client.get(reverse('balance'))
         self.assertTemplateNotUsed(self.response, 'home.html')
         self.assertTemplateUsed(self.response, 'balance.html')
+
+# testing the view that shows the success message after perfoming a withdrawal
+class TestWithdrawSuccessView(TestCase):
+
+    def test_withdraw_success_view(self):
+        self.response = self.client.get(reverse('withdraw_success_view'))
+        self.assertTemplateNotUsed(self.response, 'index.html')
+        self.assertTemplateUsed(self.response, 'withdraw_success.html')
+        self.assertEqual(self.response.status_code, 200)
+
+# testing the view that renders the success message after depositing
+class TestDepositSuccessView(TestCase):
+
+    def test(self):
+        self.response = self.client.get(reverse('deposit_success_view'))
+        self.assertTemplateNotUsed(self.response, 'index.html')
+        self.assertTemplateUsed(self.response, 'deposit_success.html')
+        self.assertEqual(self.response.status_code, 200)

@@ -6,6 +6,7 @@ from . views import WithdrawSuccessView
 from . views import WithdrawView
 from . views import BalanceView
 from . views import DepositView
+from . views import DepositSuccessView
 # my urls
 
 urlpatterns = [
@@ -16,5 +17,6 @@ urlpatterns = [
     path('login_view', views.login_view, name='login_view'),
     path('registration_view', views.registration_view, name='registration_view'),
     path('withdraw_success_view', WithdrawSuccessView.as_view(), name='withdraw_success_view'),
+    path('deposit_success_view', DepositSuccessView.as_view(), name='deposit_success_view'),
 ]
 

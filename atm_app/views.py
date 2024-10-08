@@ -6,9 +6,12 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.contrib import auth
 from django.shortcuts import redirect
+from django.db.models import Sum
 
 from . models import Transaction
-from . forms import TransactionForm
+from . forms import WithdrawForm
+from . forms import DepositForm
+from . forms import BalanceForm
 # Create your views here.
 
 # home page view
@@ -20,47 +23,68 @@ class HomeView(View):
 # the view to render the withdraw page
 class WithdrawView(LoginRequiredMixin,View):
     login_url = 'login_view'
+    form = WithdrawForm
+    errors = None
 
     def get(self, request):
-        form = TransactionForm(request.GET)
+        form = WithdrawForm(request.GET)
         context = {
             'form': form
         }
         return render(request, 'withdraw.html', context)
     
     def post(self, request):
-        form = TransactionForm(request.POST or None)
+        form = WithdrawForm(request.POST)
         if form.is_valid():
-            transaction_objects = Transaction.objects.create(
+            withdraw_transaction = Transaction.objects.create(
                 amount_to_withdraw = form.cleaned_data['amount_to_withdraw'],
                 user = request.user
             )
+            return redirect('withdraw_success_view')
         else:
-            form = TransactionForm()
-            messages.error(request, 'error saving information')
-            # return redirect('withdraw')
-        # context = {
-        #     'transaction_objects': transaction_objects
-        # }
-        return redirect('withdraw_success_view')
+            messages.error(request, 'error sending the information')
+            my_errors = form.errors
+        context = {
+            'my_errors': my_errors
+        }
+        context
+        print('the context data', context)
+        return redirect('withdraw')
 
 # the view to render the deposit page
-class DepositView(LoginRequiredMixin, View):
-    login_url = 'login_view'
 class DepositView(LoginRequiredMixin,View):
     login_url = 'login_view'
 
     def get(self, request):
-        return render(request, 'deposit.html')
+        form = DepositForm(request.GET)
+        context = {
+            'form': form
+        }
+        return render(request, 'deposit.html', context  )
+    
+    def post(self, request):
+        form = DepositForm(request.POST)
+        if form.is_valid():
+            deposit_transaction = Transaction.objects.create(
+                amount_to_deposit = form.cleaned_data['amount_to_deposit'],
+                user = request.user
+            )
+            return redirect('deposit_success_view')
+        else:
+            messages.error(request, 'error during sending of the message')
+        return redirect('deposit')
     
 # the view to render the balance page
-class BalanceView(LoginRequiredMixin, View):
-    login_url = 'login_view'
 class BalanceView(LoginRequiredMixin,View):
     login_url = 'login_view'
 
     def get(self, request):
-        return render(request, 'balance.html')
+        the_balance = Transaction.objects.aggregate(your_balance_is=Sum('amount_to_deposit'))
+        context = {
+            'the_balance': the_balance
+        }
+        return render(request, 'balance.html', context)
+ 
     
 # the registration view
 def registration_view(request):
@@ -92,10 +116,6 @@ def login_view(request):
                 return redirect(request.POST['next'])
             else:
                 return redirect('home')
-            if 'next' in request.POST:
-                return redirect(request.POST['next'])
-            else:
-                return redirect('home')
         else:
             messages.error(request, 'invalid username or password. check to continue')
     return render(request, 'login.html')
@@ -105,8 +125,19 @@ class WithdrawSuccessView(View):
 
     def get(self, request):
         last_transaction = Transaction.objects.last()
+        last_transaction = last_transaction.amount_to_withdraw
         context = {
             'last_transaction': last_transaction
         }
-        print(last_transaction)
         return render(request, 'withdraw_success.html', context)
+    
+# the view to show the success message after depositing
+class DepositSuccessView(View):
+    
+    def get(self, request):
+        last_transaction = Transaction.objects.last()
+        last_transaction = last_transaction.amount_to_deposit
+        context = {
+            'last_transaction': last_transaction
+        }
+        return render(request, 'deposit_success.html',context)

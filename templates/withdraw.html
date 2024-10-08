@@ -12,7 +12,8 @@
                 {% include 'intro.html' %}
             </div>
             <div>
-                <form method="POST" action>
+                    {{my_errors}}
+                <form method="POST" action="{% url 'withdraw' %}">
                     {% csrf_token %}
                     <div>
                         <label>Amount</label>

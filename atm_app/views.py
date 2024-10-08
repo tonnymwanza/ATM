@@ -7,6 +7,9 @@ from django.contrib import messages
 from django.contrib import auth
 from django.shortcuts import redirect
 from django.db.models import Sum
+from django.db.models import Case
+from django.db.models import When
+from django.db.models import Value
 
 from . models import Transaction
 from . forms import WithdrawForm
@@ -34,6 +37,8 @@ class WithdrawView(LoginRequiredMixin,View):
         return render(request, 'withdraw.html', context)
     
     def post(self, request):
+        trans = Transaction.objects.all().annotate(your_requested_transaction=Case(When(amount_to_withdraw__lt=50, then=Value('amount too low to be withdrawn')),
+                                                                                   When(amount_to_withdraw__gte=250000, then=Value('you cannot perfom the transaction because the amount is bigger'))))
         form = WithdrawForm(request.POST)
         if form.is_valid():
             withdraw_transaction = Transaction.objects.create(
@@ -45,10 +50,10 @@ class WithdrawView(LoginRequiredMixin,View):
             messages.error(request, 'error sending the information')
             my_errors = form.errors
         context = {
-            'my_errors': my_errors
+            'my_errors': my_errors,
+            'trans': trans
         }
         context
-        print('the context data', context)
         return redirect('withdraw')
 
 # the view to render the deposit page

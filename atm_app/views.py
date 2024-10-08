@@ -39,16 +39,24 @@ class WithdrawView(LoginRequiredMixin,View):
     def post(self, request):
         trans = Transaction.objects.all().annotate(your_requested_transaction=Case(When(amount_to_withdraw__lt=50, then=Value('amount too low to be withdrawn')),
                                                                                    When(amount_to_withdraw__gte=250000, then=Value('you cannot perfom the transaction because the amount is bigger'))))
+        sum_deposit = Transaction.objects.aggregate(Sum('amount_to_deposit'))
+        print('this is the sum deposit', sum_deposit)
         form = WithdrawForm(request.POST)
-        if form.is_valid():
-            withdraw_transaction = Transaction.objects.create(
-                amount_to_withdraw = form.cleaned_data['amount_to_withdraw'],
-                user = request.user
-            )
-            return redirect('withdraw_success_view')
-        else:
-            messages.error(request, 'error sending the information')
-            my_errors = form.errors
+        amount_to_withdraw = request.POST['amount_to_withdraw']
+        print('this is the amount to withdraw', amount_to_withdraw)
+        amount_to_withdraw = int(amount_to_withdraw)
+        # sum_deposit = int(sum_deposit)
+        if amount_to_withdraw > sum_deposit:
+            messages.error(request, 'You dont have enough money in your account')
+            if form.is_valid():
+                withdraw_transaction = Transaction.objects.create(
+                    amount_to_withdraw = form.cleaned_data['amount_to_withdraw'],
+                    user = request.user
+                )
+                return redirect('withdraw_success_view')
+            else:
+                messages.error(request, 'error sending the information')
+                my_errors = form.errors
         context = {
             'my_errors': my_errors,
             'trans': trans

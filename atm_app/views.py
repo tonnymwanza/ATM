@@ -91,14 +91,13 @@ class BalanceView(LoginRequiredMixin,View):
     def get(self, request):
         last_withdrawal = Transaction.objects.last()
         last_withdrawal_actual_figure = last_withdrawal.amount_to_withdraw
-        the_balance = Transaction.objects.aggregate(your_balance_is=Sum('amount_to_deposit'))
+        the_balance = Transaction.objects.aggregate(Sum('amount_to_deposit'))
         the_balance = the_balance['amount_to_deposit__sum']
-        # print('this is what has been deposited', the_balance)
         the_actual_balance = the_balance - last_withdrawal_actual_figure
-        # print('this is the actual balance', the_actual_balance)
+        the_actual_balance.save()
         context = {
             'the_balance': the_balance,
-            # 'the_actual_balance': the_actual_balance
+            'the_actual_balance': the_actual_balance
         }
         return render(request, 'balance.html', context)
  

@@ -37,17 +37,15 @@ class WithdrawView(LoginRequiredMixin,View):
         return render(request, 'withdraw.html', context)
     
     def post(self, request):
-        trans = Transaction.objects.all().annotate(your_requested_transaction=Case(When(amount_to_withdraw__lt=50, then=Value('amount too low to be withdrawn')),
-                                                                                   When(amount_to_withdraw__gte=250000, then=Value('you cannot perfom the transaction because the amount is bigger'))))
         sum_deposit = Transaction.objects.aggregate(Sum('amount_to_deposit'))
-        print('this is the sum deposit', sum_deposit)
         form = WithdrawForm(request.POST)
         amount_to_withdraw = request.POST['amount_to_withdraw']
-        print('this is the amount to withdraw', amount_to_withdraw)
         amount_to_withdraw = int(amount_to_withdraw)
-        # sum_deposit = int(sum_deposit)
+        my_errors = None
+        sum_deposit = sum_deposit['amount_to_deposit__sum']
         if amount_to_withdraw > sum_deposit:
-            messages.error(request, 'You dont have enough money in your account')
+            return redirect('withdraw_warning_view')
+        else:
             if form.is_valid():
                 withdraw_transaction = Transaction.objects.create(
                     amount_to_withdraw = form.cleaned_data['amount_to_withdraw'],
@@ -59,7 +57,6 @@ class WithdrawView(LoginRequiredMixin,View):
                 my_errors = form.errors
         context = {
             'my_errors': my_errors,
-            'trans': trans
         }
         context
         return redirect('withdraw')
@@ -92,9 +89,16 @@ class BalanceView(LoginRequiredMixin,View):
     login_url = 'login_view'
 
     def get(self, request):
+        last_withdrawal = Transaction.objects.last()
+        last_withdrawal_actual_figure = last_withdrawal.amount_to_withdraw
         the_balance = Transaction.objects.aggregate(your_balance_is=Sum('amount_to_deposit'))
+        the_balance = the_balance['amount_to_deposit__sum']
+        # print('this is what has been deposited', the_balance)
+        the_actual_balance = the_balance - last_withdrawal_actual_figure
+        # print('this is the actual balance', the_actual_balance)
         context = {
-            'the_balance': the_balance
+            'the_balance': the_balance,
+            # 'the_actual_balance': the_actual_balance
         }
         return render(request, 'balance.html', context)
  
@@ -154,3 +158,9 @@ class DepositSuccessView(View):
             'last_transaction': last_transaction
         }
         return render(request, 'deposit_success.html',context)
+    
+# the view to render the message to show the funds are not enough
+class WithdrawWarningView(View):
+
+    def get(self, request):
+        return render(request, 'withdraw_warning.html')

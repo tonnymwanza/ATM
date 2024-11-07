@@ -90,11 +90,16 @@ class BalanceView(LoginRequiredMixin,View):
 
     def get(self, request):
         last_withdrawal = Transaction.objects.last()
+        # if last_withdrawal and last_withdrawal.amount_to_withdraw:
         last_withdrawal_actual_figure = last_withdrawal.amount_to_withdraw
+        # else:
+            # last_withdrawal_actual_figure = 0
+
         the_balance = Transaction.objects.aggregate(Sum('amount_to_deposit'))
-        the_balance = the_balance['amount_to_deposit__sum']
+        the_balance = the_balance['amount_to_deposit__sum'] or 0
         the_actual_balance = the_balance - last_withdrawal_actual_figure
-        the_actual_balance.save()
+        last_withdrawal.balance_after_withdrawal = the_actual_balance
+        last_withdrawal.save()
         context = {
             'the_balance': the_balance,
             'the_actual_balance': the_actual_balance

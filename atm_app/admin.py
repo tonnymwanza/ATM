@@ -9,5 +9,6 @@ class AdminTransaction(admin.ModelAdmin):
         'amount_to_withdraw',
         'amount_to_deposit',
         'check_balance',
-        'user'
+        'user',
+        'balance_after_withdrawal'
     ]

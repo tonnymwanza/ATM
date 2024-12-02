@@ -6,9 +6,7 @@ from . models import Transaction
 @admin.register(Transaction)
 class AdminTransaction(admin.ModelAdmin):
     list_display = [
-        'amount_to_withdraw',
-        'amount_to_deposit',
-        'check_balance',
-        'user',
-        'balance_after_withdrawal'
+        'user_name',
+        'account_number',
+        'balance'
     ]

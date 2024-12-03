@@ -10,6 +10,7 @@ from django.db.models import Sum
 from django.db.models import Case
 from django.db.models import When
 from django.db.models import Value
+from django.http import JsonResponse
 
 from . models import Transaction
 from . forms import WithdrawForm
@@ -37,29 +38,33 @@ class WithdrawView(LoginRequiredMixin,View):
         return render(request, 'withdraw.html', context)
     
     def post(self, request):
-        sum_deposit = Transaction.objects.aggregate(Sum('amount_to_deposit'))
-        form = WithdrawForm(request.POST)
-        amount_to_withdraw = request.POST['amount_to_withdraw']
-        amount_to_withdraw = int(amount_to_withdraw)
-        my_errors = None
-        sum_deposit = sum_deposit['amount_to_deposit__sum']
-        if amount_to_withdraw > sum_deposit:
-            return redirect('withdraw_warning_view')
-        else:
-            if form.is_valid():
-                withdraw_transaction = Transaction.objects.create(
-                    amount_to_withdraw = form.cleaned_data['amount_to_withdraw'],
-                    user = request.user
-                )
-                return redirect('withdraw_success_view')
+        account_number = request.POST.get('account_number')
+        amount = float('request.POST.get('amount)')
+        try:
+            account = Transaction.objects.get(account_number=account_number)
+            if account.balance >= amount:
+                account.balance -= amount
+                account.save()
+                return JsonResponse({'message': 'withdrawal successful', 'balance': account.balance})
             else:
-                messages.error(request, 'error sending the information')
-                my_errors = form.errors
-        context = {
-            'my_errors': my_errors,
-        }
-        context
-        return redirect('withdraw')
+                messages.error(request, 'Insufficient balance')
+        except Transaction.DoesNotExist:
+            return JsonResponse({'message': 'account not found'}, status=404)
+        # else:
+        #     if form.is_valid():
+        #         withdraw_transaction = Transaction.objects.create(
+        #             amount_to_withdraw = form.cleaned_data['amount_to_withdraw'],
+        #             user = request.user
+        #         )
+        #         return redirect('withdraw_success_view')
+        #     else:
+        #         messages.error(request, 'error sending the information')
+        #         my_errors = form.errors
+        # context = {
+        #     'my_errors': my_errors,
+        # }
+        # context
+        # return redirect('withdraw')
 
 # the view to render the deposit page
 class DepositView(LoginRequiredMixin,View):
@@ -70,19 +75,28 @@ class DepositView(LoginRequiredMixin,View):
         context = {
             'form': form
         }
-        return render(request, 'deposit.html', context  )
+        return render(request, 'deposit.html', context)
     
     def post(self, request):
         form = DepositForm(request.POST)
-        if form.is_valid():
-            deposit_transaction = Transaction.objects.create(
-                amount_to_deposit = form.cleaned_data['amount_to_deposit'],
-                user = request.user
-            )
+        account_number = request.POST.get('account_number')
+        amount = float(request.POST.get('amount'))
+        try:
+            account = Transaction.objects.get(account_number=account_number)
+            account.balance += amount
+            account.save()
             return redirect('deposit_success_view')
-        else:
-            messages.error(request, 'error during sending of the message')
-        return redirect('deposit')
+        except Transaction.DoesNotExist:
+            return messages.error(request, 'account not found')
+        # if form.is_valid():
+        #     deposit_transaction = Transaction.objects.create(
+        #         amount_to_deposit = form.cleaned_data['amount_to_deposit'],
+        #         user = request.user
+        #     )
+        #     return redirect('deposit_success_view')
+        # else:
+        #     messages.error(request, 'error during sending of the message')
+        # return redirect('deposit')
     
 # the view to render the balance page
 class BalanceView(LoginRequiredMixin,View):
